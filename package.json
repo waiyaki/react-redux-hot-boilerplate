@@ -6,7 +6,7 @@
   "scripts": {
     "build": "export NODE_ENV=production && webpack -p",
     "postinstall": "npm run build",
-    "start:dev": "node ./webpackDevServer.js",
+    "start:dev": "NODE_ENV=development ./node_modules/.bin/nodemon -w server -w webpack.config.js ./bin/www",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -33,6 +33,7 @@
     "eslint-plugin-jsx-a11y": "^1.5.5",
     "eslint-plugin-react": "^5.2.2",
     "html-webpack-plugin": "^2.22.0",
+    "nodemon": "^1.9.2",
     "react-hot-loader": "^3.0.0-beta.2",
     "redux-devtools": "^3.3.1",
     "redux-devtools-dock-monitor": "^1.1.1",
@@ -44,6 +45,9 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.9.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "morgan": "^1.7.0",
     "react": "^15.2.0",
     "react-dom": "^15.2.0",
     "react-redux": "^4.4.5",

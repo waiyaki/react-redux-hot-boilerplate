@@ -3,14 +3,19 @@ import 'babel-polyfill';
 import React from 'react';
 import { render } from 'react-dom';
 
-import '../public/main.css';
-import configureStore from './store';
-import Root from './containers/Root';
+import { AppContainer } from 'react-hot-loader';
+
+import './public/main.css';
+
+import configureStore from './src/store';
+import Root from './src/containers/Root';
 
 const store = configureStore();
 
 render(
-  <Root store={store} />,
+  <AppContainer>
+    <Root store={store} />
+  </AppContainer>,
   document.getElementById('root')
 );
 

@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: path.join(__dirname, 'public/index.html'),
+  template: path.join(__dirname, 'client/public/index.html'),
   filename: 'index.html',
   inject: 'body'
 });
@@ -11,12 +11,12 @@ const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
 const config = {
   devtool: 'eval-source-map',
   entry: [
-    'webpack-dev-server/client?http://localhost:8080',
-    'webpack/hot/only-dev-server',
-    './src/index'
+    'webpack-hot-middleware/client',
+    'react-hot-loader/patch',
+    './client/index.js'
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.resolve(__dirname, 'client/dist'),
     filename: 'bundle.js',
     publicPath: '/'
   },
