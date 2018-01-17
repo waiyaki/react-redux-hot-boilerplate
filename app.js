@@ -4,9 +4,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('morgan');
 
+/* eslint-disable import/no-extraneous-dependencies */
 const webpack = require('webpack');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
+/* eslint-disable import/no-extraneous-dependencies */
+
 const webpackConfig = require('./webpack.config');
 
 const publicPath = path.resolve(__dirname, './client/dist');

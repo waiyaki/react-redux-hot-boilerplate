@@ -1,66 +1,89 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const HtmlWebpackPluginConfig = new HtmlWebpackPlugin({
-  template: path.join(__dirname, 'client/public/index.html'),
+  template: path.resolve(__dirname, 'client/src/index.html'),
   filename: 'index.html',
-  inject: 'body'
+  inject: 'body',
 });
 
+const { NODE_ENV } = process.env;
+
 const config = {
-  devtool: 'eval-source-map',
-  entry: [
-    'webpack-hot-middleware/client',
-    'react-hot-loader/patch',
-    './client/index.js'
-  ],
+  devtool: 'inline-source-map',
+  entry: ['./client/src/index.js'],
   output: {
+    filename: 'app.js',
     path: path.resolve(__dirname, 'client/dist'),
-    filename: 'bundle.js',
-    publicPath: '/'
+    publicPath: '/',
   },
   module: {
-    loaders: [{
-      test: /\.jsx?$/,
-      loaders: ['babel?cacheDirectory'],
-      exclude: /node_modules/
-    }, {
-      test: /\.css?$/,
-      loaders: ['style', 'css'],
-      exclude: /node_modules/
-    }]
+    rules: [
+      {
+        test: /\.js$/,
+        include: [/src/],
+        loader: 'babel-loader',
+      },
+    ],
   },
-  resolve: ['', '.js', '.jsx'],
-  plugins: [
-    HtmlWebpackPluginConfig,
-    new webpack.optimize.OccurenceOrderPlugin()
-  ]
+  plugins: [HtmlWebpackPluginConfig, new ExtractTextPlugin('styles.css')],
+  devServer: {
+    overlay: true,
+    stats: {
+      colors: true,
+      modules: false,
+    },
+  },
 };
 
-/*
- * If bundling for production, optimize output
- */
-if (process.env.NODE_ENV === 'production') {
+if (NODE_ENV === 'production') {
   config.devtool = false;
+  config.module.rules = [
+    {
+      test: /\.css$/,
+      use: ExtractTextPlugin.extract({
+        fallback: 'style-loader',
+        use: 'css-loader',
+      }),
+    },
+    ...config.module.rules,
+  ];
   config.plugins = [
     ...config.plugins,
-    new webpack.optimize.DedupePlugin(),
     new webpack.optimize.UglifyJsPlugin({
-      comments: false,
       compress: {
-        warnings: false
-      }
+        screw_ie8: true,
+        warnings: false,
+      },
+      mangle: {
+        screw_ie8: true,
+      },
+      output: {
+        comments: false,
+        screw_ie8: true,
+      },
     }),
-    new webpack.DefinePlugin({
-      'process.env': { NODE_ENV: JSON.stringify('production') }
-    })
+    new webpack.EnvironmentPlugin(['NODE_ENV'])
   ];
 } else {
+  config.entry = [
+    'webpack-dev-server/client?http://localhost:8000',
+    ...config.entry,
+  ];
+  config.module.rules = [
+    {
+      test: /\.css/,
+      use: ['style-loader', 'css-loader'],
+    },
+    ...config.module.rules,
+  ];
   config.plugins = [
     ...config.plugins,
-    new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoErrorsPlugin()
+    new webpack.NamedModulesPlugin(),
+    new webpack.HotModuleReplacementPlugin()
   ];
 }
+
 module.exports = config;
