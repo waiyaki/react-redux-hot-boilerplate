@@ -69,9 +69,14 @@ if (NODE_ENV === 'production') {
   ];
 } else {
   config.entry = [
-    'webpack-dev-server/client?http://localhost:8000',
+    'react-hot-loader/patch',
+    'webpack-dev-server/client?http://localhost:8080',
     ...config.entry,
   ];
+  config.devServer = {
+    contentBase: './client/dist',
+    hot: true
+  };
   config.module.rules = [
     {
       test: /\.css/,
